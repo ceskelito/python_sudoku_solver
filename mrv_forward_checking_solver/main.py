@@ -1,7 +1,8 @@
 import sys
 import numpy as np
 from get_grid_from_file import get_grid
-from sudoku_classes import Sudoku, SudokuCell, SudokuRegion
+from solver import solve_sudoku
+from sudoku_classes import Sudoku
 
 nvalues = 9
 
@@ -19,10 +20,12 @@ def main():
 
 	sudoku = Sudoku(grid)
 
-	print(sudoku)
+	# sudoku.print_grid()
 
-	# print(np.matrix(grid))
+	#if (solve_sudoku(sudoku) == 1):
+	solve_sudoku(sudoku)
+	sudoku.print_grid()
 
 
 if __name__ == "__main__":
-    main()
+	main()

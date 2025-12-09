@@ -1,31 +1,37 @@
 import numpy as np
+from sudoku_classes import Sudoku, SudokuCell, SudokuRegion
 
-def CheckRow(grid, row, value):
+def	get_mrv_cell(grid: list[list[SudokuCell]]) -> SudokuCell:
+	mrv: SudokuCell	= grid[0][0]
 
-def CheckBox(grid, row, col, value):
+	for row in grid:
+		for cell in row:
+			# print(f"Cell: {cell.row.id}:{cell.col.id}")
+			# print(f"Candidates: {cell.candidates}")
+			# print()
+			if cell.value == 0 and len(cell.candidates) < len(mrv.candidates):
+				mrv = cell
+	return mrv
+            
+		
+def solve_sudoku(sudoku: Sudoku) -> int:
+	mrv: SudokuCell
+ 
+	status = sudoku.get_status()
+	if status != 0:
+		return status
+	
+	mrv = get_mrv_cell(sudoku.grid)
+	# print(f"{mrv.row.id} : {mrv.col.id}")
+	# print(f"range: {mrv.candidates}")
+	# print(f"len: {len(mrv.candidates)}")
+	
+	# return -1
 
-def GetPossibleValues(grid, row, col, nvalues):
-
-    count = 0
-
-    for value in range(1, nvalues + 1):
-            if CheckRow(grid, row, value) and \
-                CheckBox(grid, row, col, value):
-                PossibleValues[count] = value
-                count += 1
-
-def solve_grid(grid, row, col, nvalues):
-
-    if (row == col == nvalues):
-        print(np.matrix(grid))
-        return
-    
-    for r in range(nvalues)
-        for c in range(nvalues)
-            if grid[r][c] == 0
-                PossibleValues[r][c] = GetPossibleValues(grid, row, col)
-                if len(PossibleValues) < MinRemainingValues
-                    MinRemainingValues = len(PossibleValues)
-        
-                
-
+	for i in range(len(mrv.candidates)):
+		value = mrv.candidates.pop()
+		if not value in mrv.row.values(): #all(mrv.row.values(), mrv.col.values, mrv.block.values()):
+			mrv.assign(value)
+			solve_sudoku(sudoku)
+		else:
+			mrv.candidates.add(value)
