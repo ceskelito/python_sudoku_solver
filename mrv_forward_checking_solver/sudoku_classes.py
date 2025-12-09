@@ -28,8 +28,13 @@ class SudokuCell:
 		if (value <= 0):
 			self.value = 0
 			self._reinit_candidates()
+
+			self.row.recalculate_constraints()
+			self.col.recalculate_constraints()
+			self.block.recalculate_constraints()
 		else:
 			self.value = value
+			self.candidates = set()
 			self.row.propagate_constraint(self.value)
 			self.col.propagate_constraint(self.value)
 			self.block.propagate_constraint(self.value)
@@ -50,14 +55,13 @@ class SudokuRegion:
 		return len(assigned) == len(set(assigned))
 
 	def propagate_constraint(self, value: int) -> None:
-		if value < 0:
-			value *= -1
-			for cell in self.cells:
-				cell.candidates.add(value)
-		else:
-			for cell in self.cells:
-				cell.candidates.discard(value)
+		for cell in self.cells:
+			cell.candidates.discard(value)
 
+	def recalculate_constraints(self) -> None:
+		for cell in self.cells:
+			if cell.value == 0:
+				cell._reinit_candidates()
 
 GridInt = list[list[int]]
 GridObj = list[list[SudokuCell]]
