@@ -6,9 +6,6 @@ def	get_mrv_cell(grid: list[list[SudokuCell]]) -> SudokuCell:
 
 	for row in grid:
 		for cell in row:
-			# print(f"Cell: {cell.row.id}:{cell.col.id}")
-			# print(f"Candidates: {cell.candidates}")
-			# print()
 			if cell.value == 0 and len(cell.candidates) < len(mrv.candidates):
 				mrv = cell
 	return mrv
