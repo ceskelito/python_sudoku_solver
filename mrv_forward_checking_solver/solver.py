@@ -1,4 +1,3 @@
-import numpy as np
 from sudoku_classes import Sudoku, SudokuCell, SudokuRegion
 
 def	get_mrv_cell(grid: list[list[SudokuCell]]) -> SudokuCell | None:

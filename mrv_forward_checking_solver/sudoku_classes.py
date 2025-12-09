@@ -86,8 +86,6 @@ class Sudoku:
 				SudokuCell(value=int_grid[i][j], grid_dimension=self.dimension)
 				for j in range(self.dimension)
 			]
-			# for cell in row:
-			# 	cell.init_candidates(self.dimension)
 			grid.append(row)
 		return grid
 
