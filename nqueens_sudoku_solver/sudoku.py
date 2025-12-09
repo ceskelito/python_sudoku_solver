@@ -1,36 +1,35 @@
 import sys
-from math import sqrt
 
 g_solution = 0
 
-def check_row(board_mask, row, column):
+def check_row(board_mask: list[list[int]], row: int, column: int) -> bool:
 
     for col in range(column):
         if board_mask[col] == row:
-            return -1
-    return 0
+            return False
+    return True
 
-def check_subgrid(board_mask, row, column, nsqaure):
-    dim = 3 # math.sqrt(nsqaure)
+def check_subgrid(board_mask: list[list[int]], row: int, column: int, nsqaure: int) -> bool:
+    dim = 3 # int(nsqaure ** 0.5)
     
     start_row = (row // dim) * dim
     start_col = (column // dim) * dim
 
     for c in range(start_col, column):
         
-        if board_mask[c] == -1:
+        if board_mask[c] == False:
             continue
         if (start_row <= board_mask[c] < start_row + dim):
-            return -1
+            return False
                 
-    return 0
+    return True
 
-def square_is_empty(board, row, column, depth):
+def square_is_empty(board: list[list[int]], row: int, column: int, depth: int) -> bool:
 
     for value in range(depth):
         if (board[value][column] == row):
-            return -1
-    return 0
+            return False
+    return True
 
 def print_board(board, nsqaure):
     for col in range(nsqaure):
@@ -41,7 +40,7 @@ def print_board(board, nsqaure):
                 print('#', end=' ')
         print('')
 
-def print_real_board(board, nsqaure): # Gemini 3
+def print_real_board(board: list[list[int]], nsqaure: int) -> None: # Gemini 3
     # Converto la tua struttura dati (Valore -> Colonna -> Riga)
     # nella classica visualizzazione (Riga -> Colonna -> Valore)
     grid = [[0] * nsqaure for _ in range(nsqaure)]
@@ -64,7 +63,7 @@ def print_real_board(board, nsqaure): # Gemini 3
         print()
     print("-" * 25)
 
-def sudoku_solver(board, nsqaure, column, depth):
+def sudoku_solver(board: list[list[int]], nsqaure: int, column: int, depth: int) -> None:
     
     global g_solution
     if g_solution > 0:
@@ -82,9 +81,9 @@ def sudoku_solver(board, nsqaure, column, depth):
     board_mask = board[depth]
 
     for row in range(nsqaure):
-        if (square_is_empty(board, row, column, depth) == 0 and 
-            check_row(board_mask, row, column) == 0 and
-            check_subgrid(board_mask, row, column, nsqaure) == 0):
+        if (square_is_empty(board, row, column, depth) and 
+            check_row(board_mask, row, column) and
+            check_subgrid(board_mask, row, column, nsqaure)):
 
             board_mask[column] = row
 
