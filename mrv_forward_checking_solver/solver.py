@@ -12,26 +12,35 @@ def	get_mrv_cell(grid: list[list[SudokuCell]]) -> SudokuCell:
 			if cell.value == 0 and len(cell.candidates) < len(mrv.candidates):
 				mrv = cell
 	return mrv
-            
+			
 		
 def solve_sudoku(sudoku: Sudoku) -> int:
-	mrv: SudokuCell
  
 	status = sudoku.get_status()
+
 	if status != 0:
 		return status
 	
-	mrv = get_mrv_cell(sudoku.grid)
-	# print(f"{mrv.row.id} : {mrv.col.id}")
-	# print(f"range: {mrv.candidates}")
-	# print(f"len: {len(mrv.candidates)}")
-	
-	# return -1
+	mrv: SudokuCell = get_mrv_cell(sudoku.grid)
 
-	for i in range(len(mrv.candidates)):
-		value = mrv.candidates.pop()
-		if not value in mrv.row.values(): #all(mrv.row.values(), mrv.col.values, mrv.block.values()):
-			mrv.assign(value)
-			solve_sudoku(sudoku)
-		else:
-			mrv.candidates.add(value)
+	if len(mrv.candidates) == 0:
+		return -1
+	
+	candidates_to_try = list(mrv.candidates).copy()
+
+	for value_to_try in candidates_to_try:
+		
+	# Test the value
+		mrv.assign(value_to_try)
+		result = solve_sudoku(sudoku)
+
+	# Sudoku Completed
+		if result == 1:
+			return 1
+		
+	# Invalid recursion path
+		if result == -1:
+			mrv.assign(value_to_try * -1)
+			continue  # Test the next value
+
+	return -1

@@ -4,34 +4,36 @@ from dataclasses import dataclass, field
 class SudokuCell:
 	"""Rappresenta una singola cella del Sudoku."""
 	value: int = 0
-	static: bool = field(init=False)
+	grid_dimension: int = 0
 	candidates: set[int] = field(default_factory=set, init=False)
 	row: 'SudokuRegion' = field(init=False)
 	col: 'SudokuRegion' = field(init=False)
 	block: 'SudokuRegion' = field(init=False)
 
 	def __post_init__(self):
-		self.static = self.value != 0
+		self._init_candidates()
 
-	def init_candidates(self, dimension: int) -> None:
-		self.candidates = set() if self.value != 0 else set(range(1, dimension + 1))
+	def _init_candidates(self) -> None:
+		self.candidates = set() if self.value != 0 else set(range(1, self.grid_dimension + 1))
+
+	def _reinit_candidates(self) -> None:
+		self._init_candidates()
+		used_values = set(self.row.values()) | \
+                      set(self.col.values()) | \
+                      set(self.block.values())
+		self.candidates = self.candidates - used_values
 
 	def assign(self, value: int) -> None:
 		"""Assegna un valore alla cella e svuota i candidati."""
-		self.value = value
-		self.candidates = set()
-		self.row.propagate_constraint(self.value)
-		self.col.propagate_constraint(self.value)
-		self.block.propagate_constraint(self.value)
-
-	def remove_candidate(self, value: int) -> bool:
-		"""Eventually remove a candidate. Return True if is removed"""
-		if value in self.candidates:
-			self.candidates.discard(value)
-			return True
-		return False
-
-
+		if (value <= 0):
+			self.value = 0
+			self._reinit_candidates()
+		else:
+			self.value = value
+			self.row.propagate_constraint(self.value)
+			self.col.propagate_constraint(self.value)
+			self.block.propagate_constraint(self.value)
+	
 @dataclass
 class SudokuRegion:
 	"""Represent a Sudokus's row, column or block."""
@@ -48,8 +50,13 @@ class SudokuRegion:
 		return len(assigned) == len(set(assigned))
 
 	def propagate_constraint(self, value: int) -> None:
-		for cell in self.cells:
-			cell.remove_candidate(value)
+		if value < 0:
+			value *= -1
+			for cell in self.cells:
+				cell.candidates.add(value)
+		else:
+			for cell in self.cells:
+				cell.candidates.discard(value)
 
 
 GridInt = list[list[int]]
@@ -72,11 +79,11 @@ class Sudoku:
 		grid: GridObj = []
 		for i in range(self.dimension):
 			row = [
-				SudokuCell(value=int_grid[i][j])
+				SudokuCell(value=int_grid[i][j], grid_dimension=self.dimension)
 				for j in range(self.dimension)
 			]
-			for cell in row:
-				cell.init_candidates(self.dimension)
+			# for cell in row:
+			# 	cell.init_candidates(self.dimension)
 			grid.append(row)
 		return grid
 
