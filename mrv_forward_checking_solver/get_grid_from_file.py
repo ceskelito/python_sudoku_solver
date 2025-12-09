@@ -1,7 +1,7 @@
 
-def get_grid(f_path, nvalues):
+def get_grid(f_path, nvalues) -> list[list[int]]:
 
-    grid = [[0] * nvalues for _ in range(nvalues)]
+    grid: list[list[int]] = [[0] * nvalues for _ in range(nvalues)]
 
     try:
         with open(f_path, "r") as file:

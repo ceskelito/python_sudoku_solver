@@ -1,23 +1,27 @@
 import sys
 import numpy as np
-from .get_grid_from_file import get_grid
-# import readline
+from get_grid_from_file import get_grid
+from sudoku_classes import Sudoku, SudokuCell, SudokuRegion
 
 nvalues = 9
 
 
 def main():
 
-    if len(sys.argv) < 2:
-        print("Please give an input file")
-        return 1
-    if len(sys.argv) > 2:
-        print("The program accept only 1 argument")
-        return 1
+	if len(sys.argv) < 2:
+		print("Please give an input file")
+		return 1
+	if len(sys.argv) > 2:
+		print("The program accept only 1 argument")
+		return 1
 
-    grid = get_grid(sys.argv[1], nvalues)
+	grid = get_grid(sys.argv[1], nvalues)
 
-    print(np.matrix(grid))
+	sudoku = Sudoku(grid)
+
+	print(sudoku)
+
+	# print(np.matrix(grid))
 
 
 if __name__ == "__main__":
